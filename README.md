@@ -59,7 +59,7 @@ file dict
     >>> import modified
     >>> import sh
     >>> modified.module_files(sh)
-    >>> {'.../env32/lib/python3.2/site-packages/sh-1.09-py3.2.egg/sh.py': 1384230023.0}
+    {'.../env32/lib/python3.2/site-packages/sh-1.09-py3.2.egg/sh.py': 1384230023.0}
 
 ## modified()
 Return the list of files modified since the initial scan.
