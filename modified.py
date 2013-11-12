@@ -1,5 +1,5 @@
 __author__ = 'Scott Maxwell'
-__version__ = "1.03"
+__version__ = "1.04"
 __project_url__ = "https://github.com/codecobblers/modified"
 
 # Copyright (C) 2013 by Scott Maxwell
@@ -55,19 +55,28 @@ if sys.version_info[0] == 3 and sys.version_info[1] < 3:
         return isinstance(o, Callable)
 
 
-def _get_modified(filename):
+def _get_filename_and_modified(filename):
     path = filename
     while path:
         try:
             if path.endswith('.pyc'):
                 try:
-                    return os.stat(path[:-1]).st_mtime
+                    return path[:-1], os.stat(path[:-1]).st_mtime
                 except Exception:
                     pass
-            return os.stat(path).st_mtime
+            return path, os.stat(path).st_mtime
         except Exception:
             path = os.path.dirname(path)
-    return 0
+            if os.path.isdir(path):
+                break
+    return None, 0
+
+
+def _get_modified(filename):
+    try:
+        return os.stat(filename).st_mtime
+    except Exception:
+        return 0
 
 
 def module_files(module, dependencies_dict=None):
@@ -86,18 +95,20 @@ def module_files(module, dependencies_dict=None):
     if hasattr(module, '__file__'):
         filename = module.__file__
         if filename not in dependencies_dict:
-            dependencies_dict[filename] = _get_modified(filename)
-            for name in dir(module):
-                try:
-                    item = getattr(module, name)
-                    if hasattr(item, '__file__'):
-                        module_files(item, dependencies_dict)
-                    elif hasattr(item, '__module__'):
-                        item = sys.modules[getattr(item, '__module__')]
+            realname, modified_time = _get_filename_and_modified(filename)
+            if realname and realname not in dependencies_dict:
+                dependencies_dict[realname] = modified_time
+                for name in dir(module):
+                    try:
+                        item = getattr(module, name)
                         if hasattr(item, '__file__'):
                             module_files(item, dependencies_dict)
-                except (AttributeError, KeyError):
-                    pass
+                        elif hasattr(item, '__module__'):
+                            item = sys.modules[getattr(item, '__module__')]
+                            if hasattr(item, '__file__'):
+                                module_files(item, dependencies_dict)
+                    except (AttributeError, KeyError):
+                        pass
     return dependencies_dict
 
 
@@ -113,7 +124,14 @@ def files():
         as value
     """
     if not _scanned:
-        module_files(sys.modules['__main__'], _process_files)
+        if not module_files(sys.modules['__main__'], _process_files):
+            for module in sys.modules.values():
+                if hasattr(module, '__file__'):
+                    filename = module.__file__
+                    if filename not in _process_files:
+                        realname, modified_time = _get_filename_and_modified(filename)
+                        if realname and realname not in _process_files:
+                            _process_files[realname] = modified_time
     return _process_files
 
 
@@ -141,7 +159,9 @@ def track(*args):
         if isinstance(arg, str):
             arg = [arg]
         for filename in arg:
-            _process_files[filename] = _get_modified(filename)
+            realname, modified_time = _get_filename_and_modified(filename)
+            if realname and realname not in _process_files:
+                _process_files[realname] = modified_time
 
 
 def hup_hook(signal_or_callable=signal.SIGTERM, verbose=False):
