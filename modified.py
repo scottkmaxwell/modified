@@ -1,5 +1,5 @@
 __author__ = 'Scott Maxwell'
-__version__ = "1.0"
+__version__ = "1.01"
 __project_url__ = "https://github.com/scottkmaxwell/modified"
 
 # Copyright (C) 2013 by Scott Maxwell
