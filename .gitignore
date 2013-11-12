@@ -1,0 +1,4 @@
+*.pyc
+modified.egg-info
+.idea
+env*/
