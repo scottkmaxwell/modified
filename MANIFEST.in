@@ -1,0 +1,6 @@
+include AUTHORS.md
+include LICENSE.txt
+include MANIFEST.in
+include README.md
+include modified.py
+include setup.py

@@ -1,6 +1,6 @@
 __author__ = 'Scott Maxwell'
-__version__ = "1.01"
-__project_url__ = "https://github.com/scottkmaxwell/modified"
+__version__ = "1.03"
+__project_url__ = "https://github.com/codecobblers/modified"
 
 # Copyright (C) 2013 by Scott Maxwell
 #
