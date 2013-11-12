@@ -29,7 +29,8 @@ Installation
 Functions
 =========
 
-## `files()`
+`files()`
+---------
 
 Scan all modules in the currently running app to create a dict of all files
 and their modified time.
@@ -49,7 +50,9 @@ simply return the global dict.
      '.../env32/lib/python3.2/stat.py': 1368477498.0,
      '.../env32/lib/python3.2/_abcoll.py': 1368477497.0}
 
-## `module_files(module, dependencies_dict=None)`
+`module_files(module, dependencies_dict=None)`
+----------------------------------------------
+
 Scan a module and its entire dependency tree to create a dict of all files
 and their modified time.
 
@@ -61,7 +64,9 @@ file dict
     >>> modified.module_files(sh)
     {'.../env32/lib/python3.2/site-packages/sh-1.09-py3.2.egg/sh.py': 1384230023.0}
 
-## modified()
+`modified()`
+------------
+
 Return the list of files modified since the initial scan.
 
     >>> import modified
@@ -79,7 +84,9 @@ Return the list of files modified since the initial scan.
     >>> modified.modified()
     ['modified.py']
 
-## `track(*args)`
+`track(*args)`
+--------------
+
 Track additional files. It is often useful to use glob.glob here.
 For instance:
 
@@ -87,7 +94,8 @@ For instance:
     >>> import glob
     >>> modified.track('config.ini', glob.glob('templates/*.pt'), glob.glob('db/*.db'))
 
-## `hup_hook(signal_or_callable=signal.SIGTERM, verbose=False)`
+`hup_hook(signal_or_callable=signal.SIGTERM, verbose=False)`
+------------------------------------------------------------
 
 Register a signal handler for `signal.SIGHUP` that checks for modified
 files and only acts if at least one modified file is found.
